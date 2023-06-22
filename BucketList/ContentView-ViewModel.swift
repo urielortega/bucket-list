@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import LocalAuthentication
 import MapKit
 
 extension ContentView { // Because this is the ViewModel of ContentView.
@@ -16,8 +17,8 @@ extension ContentView { // Because this is the ViewModel of ContentView.
         )
         
         @Published private(set) var locations: [Location] // Only the class itself can write locations.
-        
         @Published var selectedPlace: Location?
+        @Published var isUnlocked = false
         
         let savePath = FileManager.documentsDirectory.appendingPathComponent("SavedPlaces")
         
@@ -62,6 +63,27 @@ extension ContentView { // Because this is the ViewModel of ContentView.
                 locations[index] = location
                 
                 save()
+            }
+        }
+        
+        func authenticate() {
+            let context = LAContext()
+            var error: NSError?
+            
+            if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
+                let reason = "Please authenticate yourself to unlock your places."
+                
+                context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { success, authenticationError in
+                    if success {
+                        Task { @MainActor in
+                            self.isUnlocked = true
+                        }
+                    } else {
+                        // Error.
+                    }
+                }
+            } else {
+                // No biometrics.
             }
         }
     }
