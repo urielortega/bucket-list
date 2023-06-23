@@ -20,6 +20,8 @@ extension ContentView { // Because this is the ViewModel of ContentView.
         @Published var selectedPlace: Location?
         @Published var isUnlocked = false
         
+        @Published var areBiometricsUnsupported = false
+        
         let savePath = FileManager.documentsDirectory.appendingPathComponent("SavedPlaces")
         
         init() {
@@ -66,7 +68,7 @@ extension ContentView { // Because this is the ViewModel of ContentView.
             }
         }
         
-        func authenticate() {
+        func authenticate() {            
             let context = LAContext()
             var error: NSError?
             
@@ -84,6 +86,7 @@ extension ContentView { // Because this is the ViewModel of ContentView.
                 }
             } else {
                 // No biometrics.
+                areBiometricsUnsupported = true                
             }
         }
     }
