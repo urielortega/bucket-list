@@ -72,10 +72,10 @@ struct ContentView: View {
             .background(.blue)
             .foregroundColor(.white)
             .clipShape(Capsule())
-            .alert("Your device does not support biometric authentication.", isPresented: $viewModel.areBiometricsUnsupported) {
-                Button("OK", role: .cancel) { /* Activate UI for security code */ }
+            .alert("Authentication error", isPresented: $viewModel.isShowingAuthenticationError) {
+                Button("OK") { }
             } message: {
-                Text("Please enter your security code.")
+                Text(viewModel.authenticationError)
             }
         }
     }
